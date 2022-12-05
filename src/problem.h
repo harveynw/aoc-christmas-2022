@@ -5,6 +5,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
+#include <iomanip>
 #include <list>
 #include <exception>
 #include <cerrno>
@@ -18,25 +20,24 @@ std::list<std::string> loadProblem(int day) {
     std::list<std::string> problem;
     try
     {
-        std::ifstream f("data/input.txt");
-
+        std::stringstream s_day;
+        s_day << std::setw(2) << std::setfill('0') << day;
+        std::ifstream f("../data/input" + s_day.str() + ".txt");
         if(!f)
         {
-            std::cerr << "ERROR: Cannot open 'teste.txt'!" << std::endl;
+            std::cerr << "ERROR: Cannot open problem file" << std::endl;
             exit(1);
         }
-        std::string line;
-        std::list<std::string> mylist;
 
+        std::string line;
         while (std::getline(f,line))
         {
-            mylist.push_back(line);
-            std::cout << mylist.back() << std::endl;
+            problem.push_back(line);
         }
     }
     catch(const std::exception& ex)
     {
-        std::cerr << "Exception: '" << ex.what() << "'!" << std::endl;
+        std::cerr << "ERROR: Exception loading problem file, '" << ex.what() << std::endl;
         exit(1);
     }
     return problem;
