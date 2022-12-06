@@ -6,8 +6,6 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(data)
 include_directories(src)
 
-add_executable(aoc_christmas_2022
-        data/input01.txt
-        src/day01.cpp
-        src/day01.h
-        src/problem.h)
+add_executable(Problem1 src/day01.cpp)
+add_executable(Problem2 src/day02.cpp)
+add_executable(Problem3 src/day03.cpp)
