@@ -120,7 +120,6 @@ int problem1(const vector<string> problemFile) {
 int problem2(const vector<string> problemFile) {
     Directory *root = parseProblemFile(problemFile);
 
-    // Compute size minus each directory, storing min valid
     int root_size = root->get_size();
     int min_size = 30000000 - (70000000 - root_size);
 

@@ -5,7 +5,6 @@
 #include "problem.h"
 #include <iostream>
 #include <vector>
-#include <regex>
 #include <set>
 
 using namespace std;
