@@ -120,7 +120,6 @@ int problem2(const vector<string> problemFile) {
     for(int i = 0; i < height; i++) {
         for(int j = 0; j < width; j++) {
             int score = scenicScore(grid, height, width, i, j);
-            cout << "(" << i << "," << j << ") = " << score << endl;
             if(score > max) max = score;
         }
     }
