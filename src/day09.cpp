@@ -81,14 +81,11 @@ int problem1(const vector<string> problemFile) {
     State state = {vector<int>{0, 0}, vector<int>{0, 0}, set<vector<int>>()};
     state.visited.emplace(state.T);
 
-    for(auto line : problemFile) {
+    for(const auto& line : problemFile) {
         char dir; int amount;
         parse_move(line, dir, amount);
 
-        for(int i = 0; i < amount; i++) {
-            apply_move(state, dir);
-        }
-
+        for(int i = 0; i < amount; i++) apply_move(state, dir);
     }
 
     return state.visited.size();
@@ -108,13 +105,11 @@ int problem2(const vector<string> problemFile) {
     }
 
     // Simulate rope
-    for(auto line : problemFile) {
+    for(const auto& line : problemFile) {
         char dir; int amount;
         parse_move(line, dir, amount);
 
-        for(int steps = 0; steps < amount; steps++) {
-            apply_move_multi(knots, dir);
-        }
+        for(int steps = 0; steps < amount; steps++) apply_move_multi(knots, dir);
     }
 
     return knots[n_states-1].visited.size();
