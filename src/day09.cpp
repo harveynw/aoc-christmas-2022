@@ -21,19 +21,19 @@ int sgn(int x) {
     return (x > 0) ? 1 : ((x < 0) ? -1 : 0);
 }
 
-bool tail_follow(State &state) {
-    vector<int> diff = {state.T[0] - state.H[0], state.T[1] - state.H[1]};
+bool apply_follow(State &state) {
+    int dx = state.T[0] - state.H[0]; int dy = state.T[1] - state.H[1];
 
-    if(max(abs(diff[0]), abs(diff[1])) < 2) return false; // T doesn't need moving
+    if(max(abs(dx), abs(dy)) < 2) return false; // T doesn't need moving
 
-    if(diff[0] == 0 || diff[1] == 0) {
+    if(dx == 0 || dy == 0) {
         // Directly above/below/to the side
-        state.T[0] += sgn(diff[0]) * -1;
-        state.T[1] += sgn(diff[1]) * -1;
+        state.T[0] += sgn(dx) * -1;
+        state.T[1] += sgn(dy) * -1;
     } else {
         // Diagonal move logic
-        state.T[0] += (sgn(diff[0]) * -1);
-        state.T[1] += (sgn(diff[1]) * -1);
+        state.T[0] += (sgn(dx) * -1);
+        state.T[1] += (sgn(dy) * -1);
     }
 
     return true;
@@ -45,7 +45,26 @@ void apply_move(State &state, char dir) {
     if(dir == 'U') state.H[1] += 1;
     if(dir == 'D') state.H[1] -= 1;
 
-    if(tail_follow(state)) state.visited.emplace(state.T);
+    if(apply_follow(state)) state.visited.emplace(state.T);
+}
+
+void apply_move_multi(vector<State> &states, char dir) {
+    int n_states = states.size();
+    for(int i = 0; i < n_states; i++) {
+        if (i == 0) {
+            // Head
+            apply_move(states[0], dir);
+            states[1].H = states[0].T;
+        } else {
+            if(!apply_follow(states[i])) break;
+            if (i == n_states-1) {
+                // Tail
+                states[i].visited.emplace(states[i].T);
+                continue;
+            }
+        }
+        states[i+1].H = states[i].T;
+    }
 }
 
 void parse_move(string line, char &dir, int &amount) {
@@ -94,22 +113,7 @@ int problem2(const vector<string> problemFile) {
         parse_move(line, dir, amount);
 
         for(int steps = 0; steps < amount; steps++) {
-            for(int i = 0; i < n_states; i++) {
-                if (i == 0) {
-                    // Head
-                    apply_move(knots[0], dir);
-                    knots[1].H = knots[0].T;
-                } else {
-                    if(!tail_follow(knots[i])) break;
-                    if (i == n_states-1) {
-                        // Tail
-                        knots[i].visited.emplace(knots[i].T);
-                        continue;
-                    }
-                }
-                knots[i+1].H = knots[i].T;
-            }
-
+            apply_move_multi(knots, dir);
         }
     }
 
