@@ -17,6 +17,8 @@ struct State {
     set<vector<int>> visited;
 };
 
+regex LINE_EXPR( "(\\w) (\\d+)" );
+
 int sgn(int x) {
     return (x > 0) ? 1 : ((x < 0) ? -1 : 0);
 }
@@ -68,9 +70,8 @@ void apply_move_multi(vector<State> &states, char dir) {
 }
 
 void parse_move(string line, char &dir, int &amount) {
-    regex str_expr( "(\\w) (\\d+)" );
     smatch sm;
-    regex_match (line,sm,str_expr);
+    regex_match (line,sm,LINE_EXPR);
 
     dir = sm.str(1)[0];
     amount = stoi(sm.str(2));
