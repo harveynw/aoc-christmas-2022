@@ -28,16 +28,8 @@ bool apply_follow(State &state) {
 
     if(max(abs(dx), abs(dy)) < 2) return false; // T doesn't need moving
 
-    if(dx == 0 || dy == 0) {
-        // Directly above/below/to the side
-        state.T[0] += sgn(dx) * -1;
-        state.T[1] += sgn(dy) * -1;
-    } else {
-        // Diagonal move logic
-        state.T[0] += (sgn(dx) * -1);
-        state.T[1] += (sgn(dy) * -1);
-    }
-
+    state.T[0] -= sgn(dx);
+    state.T[1] -= sgn(dy);
     return true;
 }
 
