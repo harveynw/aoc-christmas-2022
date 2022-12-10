@@ -38,26 +38,19 @@ void apply_move(State &state, char dir) {
     if(dir == 'L') state.H[0] -= 1;
     if(dir == 'U') state.H[1] += 1;
     if(dir == 'D') state.H[1] -= 1;
-
-    if(apply_follow(state)) state.visited.emplace(state.T);
 }
 
-void apply_move_multi(vector<State> &states, char dir) {
+void move_rope(vector<State> &states, char dir) {
     int n_states = states.size();
     for(int i = 0; i < n_states; i++) {
-        if (i == 0) {
-            // Head
-            apply_move(states[0], dir);
-            states[1].H = states[0].T;
+        if(i == 0) apply_move(states[i], dir); // Head
+        if(!apply_follow(states[i])) break; // Successive knots
+
+        if (i == n_states-1) {
+            states[i].visited.emplace(states[i].T); // Tail
         } else {
-            if(!apply_follow(states[i])) break;
-            if (i == n_states-1) {
-                // Tail
-                states[i].visited.emplace(states[i].T);
-                continue;
-            }
+            states[i+1].H = states[i].T; // Update next knot
         }
-        states[i+1].H = states[i].T;
     }
 }
 
@@ -69,26 +62,9 @@ void parse_move(string line, char &dir, int &amount) {
     amount = stoi(sm.str(2));
 }
 
-int problem1(const vector<string> problemFile) {
-    // just move+follow
-    State state = {vector<int>{0, 0}, vector<int>{0, 0}, set<vector<int>>()};
-    state.visited.emplace(state.T);
-
-    for(const auto& line : problemFile) {
-        char dir; int amount;
-        parse_move(line, dir, amount);
-
-        for(int i = 0; i < amount; i++) apply_move(state, dir);
-    }
-
-    return state.visited.size();
-}
-
-int problem2(const vector<string> problemFile) {
-    // move+follow+...+follow
+int simulate_rope(const vector<string> problemFile, int n_knots) {
     vector<State> knots;
-    int n = 10;
-    int n_states = n-1; // State tracks two knots
+    int n_states = n_knots-1; // State tracks two knots
 
     // Create rope
     for(int i = 0; i < n_states; i++) {
@@ -102,10 +78,18 @@ int problem2(const vector<string> problemFile) {
         char dir; int amount;
         parse_move(line, dir, amount);
 
-        for(int steps = 0; steps < amount; steps++) apply_move_multi(knots, dir);
+        for(int steps = 0; steps < amount; steps++) move_rope(knots, dir);
     }
 
     return knots[n_states-1].visited.size();
+}
+
+int problem1(const vector<string> problemFile) {
+    return simulate_rope(problemFile, 2);
+}
+
+int problem2(const vector<string> problemFile) {
+    return simulate_rope(problemFile, 10);
 }
 
 int main() {
