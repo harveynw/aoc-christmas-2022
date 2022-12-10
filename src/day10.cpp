@@ -26,44 +26,24 @@ bool inSet(int x, set<int> &s) {
     return search != s.end();
 }
 
-int signalStrengthSum(const vector<string> problemFile, set<int> atCycles) {
-    int cycle = 1; int reg = 1;
-    int sum = 0;
-    for(int i = 0; i < problemFile.size(); i++) {
-        string call = problemFile[i];
-
-        if(inSet(cycle, atCycles)) sum += cycle*reg;
-
-        if(call != "noop") {
-            if(inSet(cycle+1, atCycles)) sum += (cycle+1)*reg;
-            cycle += 2;
-            reg += addx(call);
-        } else {
-            cycle++;
-        }
-    }
-    return sum;
-}
-
 void blit(bool (&screen)[width*height], int cycle, int reg) {
     int hor = ((cycle-1) % 40);
     if(reg-1 == hor || reg == hor || reg+1 == hor) screen[cycle-1] = true;
 }
 
-void render(const vector<string> problemFile, bool (&screen)[width*height]) {
+void runProblem(const vector<string> problemFile, function<void(int, int)> perCycle) {
     int cycle = 1; int reg = 1;
     for(int i = 0; i < problemFile.size(); i++) {
         string call = problemFile[i];
 
-        blit(screen, cycle, reg);
+        perCycle(cycle, reg);
 
         if(call != "noop") {
-            blit(screen, cycle+1, reg);
-            cycle += 2;
-            reg += addx(call);
-        } else {
+            perCycle(cycle+1, reg);
             cycle++;
+            reg += addx(call);
         }
+        cycle++;
     }
 }
 
@@ -76,12 +56,21 @@ void print(bool (&screen)[width*height]) {
 }
 
 int problem1(const vector<string> problemFile) {
-    return signalStrengthSum(problemFile, set<int>{20, 60, 100, 140, 180, 220});
+    int signal_strength = 0;
+    set<int> cycles = {20, 60, 100, 140, 180, 220};
+    auto sumStrength = [&signal_strength, &cycles] (int cycle, int reg) {
+        if(inSet(cycle, cycles)) signal_strength += cycle*reg;
+    };
+    runProblem(problemFile, sumStrength);
+    return signal_strength;
 }
 
 void problem2(const vector<string> problemFile) {
     bool screen[width*height] = { 0 };
-    render(problemFile, screen);
+    auto blitScreen = [&screen] (int cycle, int reg) {
+        blit(screen, cycle, reg);
+    };
+    runProblem(problemFile, blitScreen);
     print(screen);
 }
 
