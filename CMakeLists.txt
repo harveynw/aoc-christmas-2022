@@ -19,4 +19,4 @@ add_executable(Problem10 src/day10.cpp)
 add_executable(Problem11 src/day11.cpp)
 add_executable(Problem12 src/day12.cpp)
 add_executable(Problem13 src/day13.cpp)
-
+add_executable(Problem14 src/day14.cpp)
